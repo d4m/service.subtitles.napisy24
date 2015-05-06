@@ -1,18 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="service.subtitles.napisy24"
-    name="Napisy24.pl (API)"
-    version="1.0.0"
-    provider-name="DaM">
+<addon id="service.subtitles.napisy24" name="Program Napisy24" version="1.0.0" provider-name="DaM">
     <requires>
         <import addon="xbmc.python" version="2.14.0"/>
         <import addon="script.module.requests" version="2.3.0"/>
     </requires>
     <extension point="xbmc.subtitle.module" library="service.py"/>
     <extension point="xbmc.addon.metadata">
-        <summary lang="en">Napisy24.pl</summary>
-        <description lang="en">Search and Download subtitles from napisy24.pl</description>
-        <summary lang="pl">Napisy24.pl</summary>
-        <description lang="pl">Szukaj i pobieraj napisy z serwisu napisy24.pl</description>
+        <summary lang="en">Program Napisy24</summary>
+        <description lang="en">Search and Download subtitles from "Program Napisy24"</description>
+        <summary lang="pl">Program Napisy24</summary>
+        <description lang="pl">Szukaj i pobieraj napisy z programu Napisy24</description>
         <source>https://github.com/d4m/service.subtitles.napisy24</source>
         <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
     </extension>
