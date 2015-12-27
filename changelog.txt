@@ -1,2 +1,2 @@
-1.0.0 - by DaM 25/01/2011
+1.0.0 - by DaM 25/01/2015
 - Initial release
