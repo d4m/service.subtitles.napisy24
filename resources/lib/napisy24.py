@@ -16,18 +16,20 @@ class Napisy24:
             'User-Agent': userAgent,
         }
 
-    def requestAPI(self, item):
+    def search(self, filePath, preferredLanguage):
 
         data = {
             'postAction': 'CheckSub',
             'ua': self.userAgent,
             'ap': self.userPassword,
-            'fs': item['fileSize'],
-            'fn': item['fileName'],
-            'fh': item['opensubtitlesHash'],
-            'md': item['napiprojektHash'],
-            'nl': item['preferredLanguage']
+            'fs': int(xbmcvfs.File(filePath, "rb").size()),
+            'fn': os.path.basename(filePath),
+            'fh': self.opensubtitlesHash(filePath),
+            'md': self.napiprojektHash(filePath),
+            'nl': preferredLanguage
         }
+
+        self.log('Request url: %s, Request data: %s'%(self.apiUrl, data));
 
         request = requests.post(self.apiUrl, headers = self.httpHeaders, data = data)
 
@@ -38,6 +40,9 @@ class Napisy24:
             data = content.split('||')
 
             if len(data) == 2:
+
+                self.log('Response: %s'%(data[0]))
+
                 subtitle = data[1]
                 data = data[0].encode('utf-8').split('|')
                 subtitleData = {}

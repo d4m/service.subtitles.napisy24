@@ -47,50 +47,54 @@ def saveTmpZipFile(content):
     with open(zipFilename, "wb") as f:
         f.write(content)
     f.close()
-    
+
+    log('Temporary zip file %s saved, size: %s bytes'%(os.path.basename(zipFilename), os.path.getsize(zipFilename)))
+
     xbmc.sleep(500)
 
 Napisy24 = Napisy24(userAgent, userPassword)
+Napisy24.log = log
+
 Action = getAddonParam('action')
 
 if Action == 'search':
     filePath = urllib.unquote(xbmc.Player().getPlayingFile().decode('utf-8'))
+    fileName = os.path.basename(filePath)
+    preferredLanguage = xbmc.convertLanguage(getAddonParam('preferredlanguage'), xbmc.ISO_639_1)
 
-    item = {
-        'filePath': filePath,
-        'fileName': os.path.basename(filePath),
-        'napiprojektHash': Napisy24.napiprojektHash(filePath),
-        'opensubtitlesHash': Napisy24.opensubtitlesHash(filePath),
-        'preferredLanguage': xbmc.convertLanguage(getAddonParam('preferredlanguage'), xbmc.ISO_639_1)
-    }
-
-    item['fileSize'] = int(xbmcvfs.File(item['filePath'], "rb").size())
-
-    subtitleData = Napisy24.requestAPI(item)
+    subtitleData = Napisy24.search(filePath, preferredLanguage)
 
     if subtitleData:
 
         listitem = xbmcgui.ListItem(
             label=xbmc.convertLanguage('pl', xbmc.ENGLISH_NAME),
-            label2=item['fileName'],
-            thumbnailImage=xbmc.convertLanguage('pol', xbmc.ISO_639_1),
-            #iconImage='5'
+            label2=fileName,
+            thumbnailImage=xbmc.convertLanguage('pol', xbmc.ISO_639_1)
         )
+
+        log('Subtitles found')
 
         listitem.setProperty('sync', 'true')
         saveTmpZipFile(base64.b64decode(subtitleData['base64']))
         xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=getAddonUrl({'action': 'download'}), listitem=listitem, isFolder=False)
-        
+    else:
+        log('Subtitles not found')
+
 if Action == 'download':
     zipFilename = os.path.join(__temp__, "subtitle.zip")
 
-    xbmc.executebuiltin(('XBMC.Extract("%s","%s")' % (zipFilename, __temp__,)).encode('utf-8'), True)
- 
+    extract = xbmc.executebuiltin(('XBMC.Extract("%s","%s")' % (zipFilename, __temp__,)).encode('utf-8'), True)
+
     subtitleFiles = glob.glob(__temp__+'*.srt')
     subtitleFiles.extend(glob.glob(__temp__+'*.sub'))
     subtitleFiles.extend(glob.glob(__temp__+'*.txt'))
 
-    for fullPath in subtitleFiles:
-        xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=fullPath, listitem=xbmcgui.ListItem(label=fullPath), isFolder=False)
+    if(len(subtitleFiles) != 0):
+        log('Extracted files: %s'%(map(os.path.basename, subtitleFiles)))
+
+        for fullPath in subtitleFiles:
+            xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=fullPath, listitem=xbmcgui.ListItem(label=fullPath), isFolder=False)
+    else:
+        log('Extracted files: No files!')
 
 xbmcplugin.endOfDirectory(int(sys.argv[1]))

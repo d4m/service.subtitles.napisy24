@@ -1,2 +1,7 @@
 1.0.0 - by DaM 25/01/2015
 - Initial release
+
+1.0.1 - by DaM 12/02/2017
+- Renamed addon from "Program Napisy24" to "Napisy24"
+- Added some debug info to kodi.log
+- Replaced icon and logo .png files
