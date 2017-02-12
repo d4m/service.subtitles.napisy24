@@ -83,7 +83,7 @@ if Action == 'search':
 if Action == 'download':
     zipFilename = os.path.join(__temp__, "subtitle.zip")
 
-    extract = xbmc.executebuiltin(('XBMC.Extract("%s","%s")' % (zipFilename, __temp__,)).encode('utf-8'), True)
+    xbmc.executebuiltin(('XBMC.Extract("%s","%s")' % (zipFilename, __temp__,)).encode('utf-8'), True)
 
     subtitleFiles = glob.glob(__temp__+'*.srt')
     subtitleFiles.extend(glob.glob(__temp__+'*.sub'))
